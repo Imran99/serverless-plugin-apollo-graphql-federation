@@ -22,9 +22,10 @@ service:
   custom:
     apolloGraphQLFederation:
       apolloKey: apollo-api-key
-      serviceUrl: https://my-implementing-service.com/
-      localSchemaFile: './schema.gql',
-      graph: 'myGraph'
+      graphs:
+        - name: 'myGraph'
+          url: https://my-implementing-service/mygraphendpoint
+          schema: './myGraph/schema.gql',
 ```
 
 ## Couldn't I just use the serverless-hooks-plugin to do this?

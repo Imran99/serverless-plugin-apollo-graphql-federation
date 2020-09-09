@@ -16,30 +16,36 @@ class ServerlessPlugin {
 
   async uploadFederatedSchema() {
     const { serverless } = this;
+    const provider = serverless.getProvider('aws');
+    const { service } = serverless.service;
+    const stage = provider.getStage();
     const apolloKey = get(serverless, 'service.custom.apolloGraphQLFederation.apolloKey');
-    const serviceUrl = get(serverless, 'service.custom.apolloGraphQLFederation.serviceUrl');
-    const localSchemaFile = get(serverless, 'service.custom.apolloGraphQLFederation.localSchemaFile');
-    const graph = get(serverless, 'service.custom.apolloGraphQLFederation.graph');
+    const graphs = get(serverless, 'service.custom.apolloGraphQLFederation.graphs', []);
+    process.env.APOLLO_KEY = apolloKey; //set this here to avoid it being logged
 
     if (!apolloKey) {
       this.logError('Apollo api key was not provided');
       return;
     }
-    process.env.APOLLO_KEY = apolloKey; //set this here to avoid it being logged
+    if (graphs.length <= 0) {
+      this.logError('Graph configuration was not provided, skipping schema validation');
+      return;
+    }
 
-    const provider = serverless.getProvider('aws');
-    const { service } = serverless.service;
-    const stage = provider.getStage();
+    for (const graph of graphs) {
+      const { name, url, schema } = graph;
+      this.logMessage(`Validating '${name}' federated graphql schema...`);
 
-    this.logMessage('Validating federated graphql schema...');
-    await apollo.run([
-      'service:push',
-      `--graph=${graph}`,
-      `--variant=${stage}`,
-      `--serviceName=${service}`,
-      `--serviceURL=${serviceUrl}`,
-      `--localSchemaFile=${localSchemaFile}`
-    ]);
+      await apollo.run([
+        'service:push',
+        `--graph=${name}`,
+        `--variant=${stage}`,
+        `--serviceName=${service}`,
+        `--serviceURL=${url}`,
+        `--localSchemaFile=${schema}`
+      ]);
+
+    }
   }
 
   logMessage(message) {

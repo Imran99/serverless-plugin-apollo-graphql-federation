@@ -22,9 +22,11 @@ describe('Uploading federated schema to Apollo', () => {
           custom: {
             apolloGraphQLFederation: {
               apolloKey: '1234',
-              serviceUrl: 'https://my-implementing-service.com/graphql',
-              localSchemaFile: './schema.gql',
-              graph: 'myGraph'
+              graphs: [{
+                name: 'myGraph',
+                url: 'https://my-implementing-service.com/graphql',
+                schema: './schema.gql',
+              }]
             }
           }
         }
