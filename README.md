@@ -26,3 +26,6 @@ service:
       localSchemaFile: './schema.gql',
       graph: 'myGraph'
 ```
+
+## Couldn't I just use the serverless-hooks-plugin to do this?
+Yes you could but this would potentially log your apolloKey in your build server logs which is undesirable.
