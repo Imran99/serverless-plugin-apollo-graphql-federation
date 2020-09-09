@@ -1,13 +1,11 @@
 'use strict';
 
-const childProcess = require('child_process');
 const plugin = require('../src/index.js');
+const apollo = require('apollo');
 
 describe('Uploading federated schema to Apollo', () => {
   beforeAll(() => {
-    jest.spyOn(childProcess, 'execSync').mockReturnValue({
-      toString: jest.fn()
-    });
+    jest.spyOn(apollo, 'run').mockImplementation();
   });
 
   afterAll(() => {
@@ -15,7 +13,7 @@ describe('Uploading federated schema to Apollo', () => {
   });
 
   describe('when a valid schema is provided', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       const sls = {
         cli: { consoleLog: () => { } },
         getProvider: () => ({ getStage: () => 'myStage' }),
@@ -32,13 +30,20 @@ describe('Uploading federated schema to Apollo', () => {
         }
       };
       const slsPlugin = new plugin(sls, null);
-      slsPlugin.uploadFederatedSchema();
+      await slsPlugin.uploadFederatedSchema();
     });
 
     test('calls the apollo cli to upload the schema with the correct arguments', () => {
-      expect(childProcess.execSync)
+      expect(apollo.run)
         .toHaveBeenCalledTimes(1)
-        .toHaveBeenLastCalledWith('npx apollo service:push --graph=myGraph --variant=myStage --serviceName=my-implementing-service --serviceURL=https://my-implementing-service.com/graphql --localSchemaFile=./schema.gql');
+        .toHaveBeenLastCalledWith([
+          'service:push',
+          '--graph=myGraph',
+          '--variant=myStage',
+          '--serviceName=my-implementing-service',
+          '--serviceURL=https://my-implementing-service.com/graphql',
+          '--localSchemaFile=./schema.gql'
+        ]);
     });
   });
 });

@@ -2,7 +2,7 @@
 
 const get = require('lodash.get');
 const chalk = require('chalk');
-const childProcess = require('child_process');
+const apollo = require('apollo');
 
 class ServerlessPlugin {
   constructor(serverless, options) {
@@ -14,7 +14,7 @@ class ServerlessPlugin {
     };
   }
 
-  uploadFederatedSchema() {
+  async uploadFederatedSchema() {
     const { serverless } = this;
     const apolloKey = get(serverless, 'service.custom.apolloGraphQLFederation.apolloKey');
     const serviceUrl = get(serverless, 'service.custom.apolloGraphQLFederation.serviceUrl');
@@ -29,11 +29,17 @@ class ServerlessPlugin {
 
     const provider = serverless.getProvider('aws');
     const { service } = serverless.service;
-
     const stage = provider.getStage();
-    const command = `npx apollo service:push --graph=${graph} --variant=${stage} --serviceName=${service} --serviceURL=${serviceUrl} --localSchemaFile=${localSchemaFile}`;
-    const output = childProcess.execSync(command).toString();
-    this.logMessage(output);
+
+    this.logMessage('Validating federated graphql schema...');
+    await apollo.run([
+      'service:push',
+      `--graph=${graph}`,
+      `--variant=${stage}`,
+      `--serviceName=${service}`,
+      `--serviceURL=${serviceUrl}`,
+      `--localSchemaFile=${localSchemaFile}`
+    ]);
   }
 
   logMessage(message) {
