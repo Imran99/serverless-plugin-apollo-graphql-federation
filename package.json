@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "apollo": "^2.30.3",
-    "node-fetch": "^2.6.1",
     "npx": "^10.2.2"
   },
   "devDependencies": {
