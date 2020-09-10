@@ -1,0 +1,10 @@
+# package directories
+node_modules
+jspm_packages
+
+test
+.eslintignore
+.eslintrc
+.gitignore
+jest.config.js
+README.md
