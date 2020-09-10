@@ -21,9 +21,9 @@ describe('Uploading federated schema to Apollo', () => {
           service: 'my-implementing-service',
           custom: {
             apolloGraphQLFederation: {
-              apolloKey: '1234',
               graphs: [{
                 name: 'myGraph',
+                apolloKey: '1234',
                 url: 'https://my-implementing-service.com/graphql',
                 schema: './schema.gql',
               }]
@@ -44,7 +44,8 @@ describe('Uploading federated schema to Apollo', () => {
           '--variant=myStage',
           '--serviceName=my-implementing-service',
           '--serviceURL=https://my-implementing-service.com/graphql',
-          '--localSchemaFile=./schema.gql'
+          '--localSchemaFile=./schema.gql',
+          '--key=1234'
         ]);
     });
   });

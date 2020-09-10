@@ -21,9 +21,9 @@ plugins:
 service:
   custom:
     apolloGraphQLFederation:
-      apolloKey: apollo-api-key
       graphs:
         - name: 'myGraph'
+          apolloKey: apollo-api-key-for-my-graph
           url: https://my-implementing-service/mygraphendpoint
           schema: './myGraph/schema.gql',
 ```
