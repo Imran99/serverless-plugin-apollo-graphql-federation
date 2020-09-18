@@ -19,21 +19,26 @@ class ServerlessPlugin {
     const provider = serverless.getProvider('aws');
     const { service } = serverless.service;
     const stage = provider.getStage();
+    const region = provider.getRegion();
     const graphs = get(serverless, 'service.custom.apolloGraphQLFederation.graphs', []);
+    const uploadForDeploymentRegion = get(serverless, 'service.custom.apolloGraphQLFederation.uploadForDeploymentRegion');
 
     if (graphs.length <= 0) {
       this.logError('Graph configuration was not provided, skipping schema validation');
       return;
     }
 
+    if (uploadForDeploymentRegion != null && region !== uploadForDeploymentRegion) {
+      this.logMessage(`Skipping schema upload for ${region}`);
+      return;
+    }
+
     for (const graph of graphs) {
       const { name, url, schema, apolloKey } = graph;
       if (!apolloKey) {
-        this.logError(`Apollo api key was not provided for '${name}' graph`);
-        break;
+        throw new Error(`Apollo api key was not provided for '${name}' graph`);
       }
       this.logMessage(`Validating '${name}' federated graphql schema...`);
-
       await apollo.run([
         'service:push',
         `--graph=${name}`,
@@ -43,7 +48,6 @@ class ServerlessPlugin {
         `--localSchemaFile=${schema}`,
         `--key=${apolloKey}`
       ]);
-
     }
   }
 

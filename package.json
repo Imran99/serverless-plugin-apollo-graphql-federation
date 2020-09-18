@@ -1,6 +1,6 @@
 {
   "name": "serverless-plugin-apollo-graphql-federation",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A serverless plugin that uploads a graphql schema to the Apollo Platform managed federation service",
   "repository": {
     "type": "git",
