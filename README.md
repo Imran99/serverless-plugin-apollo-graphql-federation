@@ -21,12 +21,15 @@ plugins:
 service:
   custom:
     apolloGraphQLFederation:
+      uploadForDeploymentRegion: eu-west-2
       graphs:
         - name: 'myGraph'
           apolloKey: apollo-api-key-for-my-graph
           url: https://my-implementing-service/mygraphendpoint
           schema: './myGraph/schema.gql',
 ```
+
+`uploadForDeploymentRegion` (optional) is used for multi-region deployments where the same api is deployed to multiple AWS regions. If you encounter intermittent Apollo schema validation failures when doing simultaneous regional deployments, try setting this variable to one of your deployment regions. The schema only needs to be uploaded for a single region.
 
 ## Couldn't I just use the serverless-hooks-plugin to do this?
 Yes you could but this would potentially log your apolloKey in your build server logs which is undesirable.
