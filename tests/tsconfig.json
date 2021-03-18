@@ -5,5 +5,5 @@
     "noEmit": true,
     "paths": {}
   },
-  "include": ["**/*", "../jest.config.ts"]
+  "include": ["**/*", "jest.config.ts"]
 }
