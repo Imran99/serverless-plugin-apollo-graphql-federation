@@ -9,8 +9,19 @@ class ServerlessPlugin {
     this.serverless = serverless;
     this.options = options;
 
+    this.commands = {
+      apollo: {
+        commands: {
+          'service:push': {
+            usage: 'Pushes your implementing service schema to apollo managed federation',
+            lifecycleEvents: ['push']
+          }
+        }
+      }
+    };
     this.hooks = {
       'after:deploy:deploy': this.uploadFederatedSchema.bind(this),
+      'apollo:service:push:push': this.uploadFederatedSchema.bind(this),
     };
   }
 
