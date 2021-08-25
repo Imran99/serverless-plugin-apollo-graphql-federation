@@ -30,6 +30,24 @@ describe('Uploading federated schema to Apollo', () => {
     });
   });
 
+  describe('when the variant is not provided', () => {
+    let slsPlugin;
+    beforeAll(async () => {
+      const sls = given_an_sls_instance({ withVariant: undefined });
+      slsPlugin = new plugin(sls, null);
+    });
+
+    afterAll(() => {
+      jest.resetAllMocks();
+    });
+
+    test('throws an error', () => {
+      expect(slsPlugin.uploadFederatedSchema()).rejects.toEqual(new Error(
+        'Graph variant was not provided for \'myGraph\' graph'
+      ));
+    });
+  });
+
   describe('when a valid schema is provided', () => {
     beforeAll(async () => {
       const sls = given_an_sls_instance();
@@ -100,12 +118,11 @@ describe('Uploading federated schema to Apollo', () => {
     });
   });
 
-  const given_an_sls_instance = ({ withApolloKey, withRegion, withUploadForDeploymentRegion } = {}) => {
+  const given_an_sls_instance = ({ withApolloKey, withRegion, withUploadForDeploymentRegion, withVariant } = {}) => {
     return {
       cli: { consoleLog: () => { } },
       getProvider: () => ({
-        getStage: () => 'myStage',
-        getRegion: () => withRegion || 'eu-west-2'
+        getRegion: () => withRegion ?? 'eu-west-2'
       }),
       service: {
         service: 'my-implementing-service',
@@ -114,9 +131,10 @@ describe('Uploading federated schema to Apollo', () => {
             uploadForDeploymentRegion: withUploadForDeploymentRegion,
             graphs: [{
               name: 'myGraph',
-              apolloKey: withApolloKey || '1234',
+              apolloKey: withApolloKey ?? '1234',
               url: 'https://my-implementing-service.com/graphql',
               schema: './schema.gql',
+              variant: withVariant ?? 'myStage'
             }]
           }
         }

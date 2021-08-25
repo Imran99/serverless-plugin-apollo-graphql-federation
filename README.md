@@ -29,6 +29,8 @@ service:
           schema: './myGraph/schema.gql',
 ```
 
+Deploy using `sls deploy --region xxx` or `sls apollo service:push`
+
 `uploadForDeploymentRegion` (optional) is used for multi-region deployments where the same api is deployed to multiple AWS regions. If you encounter intermittent Apollo schema validation failures when doing simultaneous regional deployments, try setting this variable to one of your deployment regions. The schema only needs to be uploaded for a single region.
 
 ## Couldn't I just use the serverless-hooks-plugin to do this?
