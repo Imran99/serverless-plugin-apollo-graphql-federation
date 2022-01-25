@@ -1,11 +1,11 @@
 'use strict';
 
 const plugin = require('../src/index.js');
-const apollo = require('apollo');
+const rover = require('@apollo/rover');
 
 describe('Uploading federated schema to Apollo', () => {
   beforeAll(() => {
-    jest.spyOn(apollo, 'run').mockImplementation();
+    jest.spyOn(rover, 'run').mockImplementation();
   });
 
   afterAll(() => {
@@ -60,7 +60,7 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(apollo.run)
+      expect(rover.run)
         .toHaveBeenCalledTimes(1)
         .toHaveBeenCalledWith([
           'service:push',
@@ -86,7 +86,7 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(apollo.run)
+      expect(rover.run)
         .toHaveBeenCalledTimes(1)
         .toHaveBeenCalledWith([
           'service:push',
@@ -112,7 +112,7 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('does not call the apollo cli to validate the schema', () => {
-      expect(apollo.run)
+      expect(rover.run)
         .not
         .toHaveBeenCalled();
     });

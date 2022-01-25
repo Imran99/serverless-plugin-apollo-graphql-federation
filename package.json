@@ -1,6 +1,6 @@
 {
   "name": "serverless-plugin-apollo-graphql-federation",
-  "version": "3.0.0",
+  "version": "3.0.1-beta.5",
   "description": "A serverless plugin that uploads a graphql schema to the Apollo Platform managed federation service",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "test": "jest --config ./jest.config.js"
   },
   "dependencies": {
-    "apollo": "^2.33.6",
+    "@apollo/rover": "^0.4.1",
     "chalk": "^4.1.2",
     "lodash.get": "^4.4.2"
   },
