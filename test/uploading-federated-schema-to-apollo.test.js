@@ -60,17 +60,12 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(rover.run)
-        .toHaveBeenCalledTimes(1)
-        .toHaveBeenCalledWith([
-          'service:push',
-          '--graph=myGraph',
-          '--variant=myStage',
-          '--serviceName=my-implementing-service',
-          '--serviceURL=https://my-implementing-service.com/graphql',
-          '--localSchemaFile=./schema.gql',
-          '--key=1234'
-        ]);
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          {
+            stdio: 'inherit'
+          });
     });
   });
 
@@ -86,17 +81,12 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(rover.run)
-        .toHaveBeenCalledTimes(1)
-        .toHaveBeenCalledWith([
-          'service:push',
-          '--graph=myGraph',
-          '--variant=myStage',
-          '--serviceName=my-implementing-service',
-          '--serviceURL=https://my-implementing-service.com/graphql',
-          '--localSchemaFile=./schema.gql',
-          '--key=1234'
-        ]);
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          {
+            stdio: 'inherit'
+          });
     });
   });
 
@@ -112,7 +102,7 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('does not call the apollo cli to validate the schema', () => {
-      expect(rover.run)
+      expect(exec.execSync)
         .not
         .toHaveBeenCalled();
     });
