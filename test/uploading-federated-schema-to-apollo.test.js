@@ -1,11 +1,11 @@
 'use strict';
 
 const plugin = require('../src/index.js');
-const rover = require('@apollo/rover');
+const exec = require('child_process');
 
 describe('Uploading federated schema to Apollo', () => {
   beforeAll(() => {
-    jest.spyOn(rover, 'run').mockImplementation();
+    jest.spyOn(exec, 'execSync').mockImplementation();
   });
 
   afterAll(() => {

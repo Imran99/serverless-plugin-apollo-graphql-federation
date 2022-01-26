@@ -2,7 +2,7 @@
 
 const get = require('lodash.get');
 const chalk = require('chalk');
-const rover = require('@apollo/rover');
+const exec = require('child_process');
 
 class ServerlessPlugin {
   constructor(serverless, options) {
@@ -54,17 +54,9 @@ class ServerlessPlugin {
 
       this.logMessage(`Validating '${name}' federated graphql schema...`);
       process.env.APOLLO_KEY = apolloKey;
-      await rover.run([
-        'subgraph',
-        'publish',
-        `${name}@${variant}`,
-        '--schema',
-        schema,
-        '--name',
-        service,
-        '--routing-url',
-        url
-      ]);
+      exec.execSync(`npx rover subgraph publish ${name}@${variant} --schema ${schema} --name ${service} --routing-url ${url}`, {
+        stdio: 'inherit'
+      });
     }
   }
 
