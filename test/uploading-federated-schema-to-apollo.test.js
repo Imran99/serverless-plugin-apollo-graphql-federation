@@ -1,11 +1,11 @@
 'use strict';
 
 const plugin = require('../src/index.js');
-const apollo = require('apollo');
+const exec = require('child_process');
 
 describe('Uploading federated schema to Apollo', () => {
   beforeAll(() => {
-    jest.spyOn(apollo, 'run').mockImplementation();
+    jest.spyOn(exec, 'execSync').mockImplementation();
   });
 
   afterAll(() => {
@@ -60,17 +60,12 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(apollo.run)
-        .toHaveBeenCalledTimes(1)
-        .toHaveBeenCalledWith([
-          'service:push',
-          '--graph=myGraph',
-          '--variant=myStage',
-          '--serviceName=my-implementing-service',
-          '--serviceURL=https://my-implementing-service.com/graphql',
-          '--localSchemaFile=./schema.gql',
-          '--key=1234'
-        ]);
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          {
+            stdio: 'inherit'
+          });
     });
   });
 
@@ -86,17 +81,12 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('calls the apollo cli to validate the schema with the correct arguments', () => {
-      expect(apollo.run)
-        .toHaveBeenCalledTimes(1)
-        .toHaveBeenCalledWith([
-          'service:push',
-          '--graph=myGraph',
-          '--variant=myStage',
-          '--serviceName=my-implementing-service',
-          '--serviceURL=https://my-implementing-service.com/graphql',
-          '--localSchemaFile=./schema.gql',
-          '--key=1234'
-        ]);
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          {
+            stdio: 'inherit'
+          });
     });
   });
 
@@ -112,7 +102,7 @@ describe('Uploading federated schema to Apollo', () => {
     });
 
     test('does not call the apollo cli to validate the schema', () => {
-      expect(apollo.run)
+      expect(exec.execSync)
         .not
         .toHaveBeenCalled();
     });
