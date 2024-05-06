@@ -1,0 +1,5 @@
+{
+  "circleci.persistedProjectSelection": [
+    "gh/Imran99/serverless-plugin-apollo-graphql-federation"
+  ]
+}
