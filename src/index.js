@@ -49,7 +49,7 @@ class ServerlessPlugin {
         throw new Error(`Apollo api key was not provided for '${name}' graph`);
       }
       if (!variant) {
-        throw new Error(`variant was not provided for '${name}' graph`);
+        throw new Error(`Graph variant was not provided for '${name}' graph`);
       }
 
       this.logMessage(`Validating '${name}' federated graphql schema...`);

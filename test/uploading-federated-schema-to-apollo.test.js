@@ -15,7 +15,7 @@ describe('Uploading federated schema to Apollo', () => {
   describe('when the apollo key is not provided', () => {
     let slsPlugin;
     beforeAll(async () => {
-      const sls = given_an_sls_instance({ withApolloKey: undefined });
+      const sls = given_an_sls_instance({ withApolloKey: null });
       slsPlugin = new plugin(sls, null);
     });
 
@@ -23,8 +23,8 @@ describe('Uploading federated schema to Apollo', () => {
       jest.resetAllMocks();
     });
 
-    test('throws an error', () => {
-      expect(slsPlugin.uploadFederatedSchema()).rejects.toEqual(new Error(
+    test('throws an error', async () => {
+      await expect(slsPlugin.uploadFederatedSchema()).rejects.toEqual(new Error(
         'Apollo api key was not provided for \'myGraph\' graph'
       ));
     });
@@ -33,7 +33,7 @@ describe('Uploading federated schema to Apollo', () => {
   describe('when the variant is not provided', () => {
     let slsPlugin;
     beforeAll(async () => {
-      const sls = given_an_sls_instance({ withVariant: undefined });
+      const sls = given_an_sls_instance({ withVariant: null });
       slsPlugin = new plugin(sls, null);
     });
 
@@ -41,8 +41,8 @@ describe('Uploading federated schema to Apollo', () => {
       jest.resetAllMocks();
     });
 
-    test('throws an error', () => {
-      expect(slsPlugin.uploadFederatedSchema()).rejects.toEqual(new Error(
+    test('throws an error', async () => {
+      await expect(slsPlugin.uploadFederatedSchema()).rejects.toEqual(new Error(
         'Graph variant was not provided for \'myGraph\' graph'
       ));
     });
@@ -121,10 +121,10 @@ describe('Uploading federated schema to Apollo', () => {
             uploadForDeploymentRegion: withUploadForDeploymentRegion,
             graphs: [{
               name: 'myGraph',
-              apolloKey: withApolloKey ?? '1234',
+              apolloKey: withApolloKey === undefined ? '1234' : withApolloKey,
               url: 'https://my-implementing-service.com/graphql',
               schema: './schema.gql',
-              variant: withVariant ?? 'myStage'
+              variant: withVariant === undefined ? 'myStage' : withVariant
             }]
           }
         }
