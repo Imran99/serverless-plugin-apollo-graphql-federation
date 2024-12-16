@@ -59,7 +59,16 @@ describe('Uploading federated schema to Apollo', () => {
       jest.resetAllMocks();
     });
 
-    test('calls the apollo cli to validate the schema with the correct arguments', () => {
+    test('calls the apollo cli to validate the schema as publish no longer throws an error if composition fails', () => {
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
+          {
+            stdio: 'inherit'
+          });
+    });
+
+    test('calls the apollo cli to publish the schema with the correct arguments', () => {
       expect(exec.execSync)
         .toHaveBeenCalledWith(
           'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
@@ -80,7 +89,7 @@ describe('Uploading federated schema to Apollo', () => {
       jest.resetAllMocks();
     });
 
-    test('calls the apollo cli to validate the schema with the correct arguments', () => {
+    test('calls the apollo cli to publish the schema with the correct arguments', () => {
       expect(exec.execSync)
         .toHaveBeenCalledWith(
           'npx rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
