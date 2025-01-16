@@ -54,7 +54,10 @@ class ServerlessPlugin {
 
       this.logMessage(`Validating '${name}' federated graphql schema...`);
       process.env.APOLLO_KEY = apolloKey;
-      exec.execSync(`npx rover subgraph publish ${name}@${variant} --schema ${schema} --name ${service} --routing-url ${url}`, {
+      exec.execSync(`npx --yes rover subgraph check ${name}@${variant} --schema ${schema} --name ${service}`, {
+        stdio: 'inherit'
+      });
+      exec.execSync(`npx --yes rover subgraph publish ${name}@${variant} --schema ${schema} --name ${service} --routing-url ${url}`, {
         stdio: 'inherit'
       });
     }
