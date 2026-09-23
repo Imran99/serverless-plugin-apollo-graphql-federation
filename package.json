@@ -24,7 +24,7 @@
     "test": "jest --config ./jest.config.js"
   },
   "dependencies": {
-    "@apollo/rover": "^0.26.2",
+    "@apollo/rover": "^0.41.0",
     "chalk": "^4.1.2",
     "lodash.get": "^4.4.2"
   },
