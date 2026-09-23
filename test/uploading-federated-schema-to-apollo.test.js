@@ -117,7 +117,116 @@ describe('Uploading federated schema to Apollo', () => {
     });
   });
 
-  const given_an_sls_instance = ({ withApolloKey, withRegion, withUploadForDeploymentRegion, withVariant } = {}) => {
+  describe('when skipCheck is enabled on the graph', () => {
+    beforeAll(async () => {
+      const sls = given_an_sls_instance({ withSkipCheck: true });
+      const slsPlugin = new plugin(sls, null);
+      await slsPlugin.uploadFederatedSchema();
+    });
+
+    afterAll(() => {
+      jest.resetAllMocks();
+    });
+
+    test('does not call the apollo cli to validate the schema', () => {
+      expect(exec.execSync)
+        .not
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
+          { stdio: 'inherit' });
+    });
+
+    test('still calls the apollo cli to publish the schema', () => {
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          { stdio: 'inherit' });
+    });
+  });
+
+  describe('when skipCheck is enabled globally', () => {
+    beforeAll(async () => {
+      const sls = given_an_sls_instance({ withGlobalSkipCheck: true });
+      const slsPlugin = new plugin(sls, null);
+      await slsPlugin.uploadFederatedSchema();
+    });
+
+    afterAll(() => {
+      jest.resetAllMocks();
+    });
+
+    test('does not call the apollo cli to validate the schema', () => {
+      expect(exec.execSync)
+        .not
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
+          { stdio: 'inherit' });
+    });
+
+    test('still calls the apollo cli to publish the schema', () => {
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          { stdio: 'inherit' });
+    });
+  });
+
+  describe('when skipCheck is enabled globally but overridden to false on the graph', () => {
+    beforeAll(async () => {
+      const sls = given_an_sls_instance({ withGlobalSkipCheck: true, withSkipCheck: false });
+      const slsPlugin = new plugin(sls, null);
+      await slsPlugin.uploadFederatedSchema();
+    });
+
+    afterAll(() => {
+      jest.resetAllMocks();
+    });
+
+    test('still calls the apollo cli to validate the schema for that graph', () => {
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
+          { stdio: 'inherit' });
+    });
+  });
+
+  describe('when the APOLLO_SKIP_CHECK environment variable is set', () => {
+    beforeAll(async () => {
+      process.env.APOLLO_SKIP_CHECK = 'true';
+      const sls = given_an_sls_instance();
+      const slsPlugin = new plugin(sls, null);
+      await slsPlugin.uploadFederatedSchema();
+    });
+
+    afterAll(() => {
+      delete process.env.APOLLO_SKIP_CHECK;
+      jest.resetAllMocks();
+    });
+
+    test('does not call the apollo cli to validate the schema', () => {
+      expect(exec.execSync)
+        .not
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
+          { stdio: 'inherit' });
+    });
+
+    test('still calls the apollo cli to publish the schema', () => {
+      expect(exec.execSync)
+        .toHaveBeenCalledWith(
+          'npx --yes rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
+          { stdio: 'inherit' });
+    });
+  });
+
+  const given_an_sls_instance = ({
+    withApolloKey,
+    withRegion,
+    withUploadForDeploymentRegion,
+    withVariant,
+    withSkipCheck,
+    withGlobalSkipCheck,
+  } = {}) => {
     return {
       cli: { consoleLog: () => { } },
       getProvider: () => ({
@@ -128,12 +237,14 @@ describe('Uploading federated schema to Apollo', () => {
         custom: {
           apolloGraphQLFederation: {
             uploadForDeploymentRegion: withUploadForDeploymentRegion,
+            skipCheck: withGlobalSkipCheck,
             graphs: [{
               name: 'myGraph',
               apolloKey: withApolloKey === undefined ? '1234' : withApolloKey,
               url: 'https://my-implementing-service.com/graphql',
               schema: './schema.gql',
-              variant: withVariant === undefined ? 'myStage' : withVariant
+              variant: withVariant === undefined ? 'myStage' : withVariant,
+              ...(withSkipCheck !== undefined && { skipCheck: withSkipCheck }),
             }]
           }
         }
