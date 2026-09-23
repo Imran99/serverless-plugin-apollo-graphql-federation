@@ -32,6 +32,7 @@ class ServerlessPlugin {
     const region = provider.getRegion();
     const graphs = get(serverless, 'service.custom.apolloGraphQLFederation.graphs', []);
     const uploadForDeploymentRegion = get(serverless, 'service.custom.apolloGraphQLFederation.uploadForDeploymentRegion');
+    const skipCheckByDefault = get(serverless, 'service.custom.apolloGraphQLFederation.skipCheck', false);
 
     if (graphs.length <= 0) {
       this.logError('Graph configuration was not provided, skipping schema validation');
@@ -44,7 +45,7 @@ class ServerlessPlugin {
     }
 
     for (const graph of graphs) {
-      const { name, url, schema, apolloKey, variant, skipCheck } = graph;
+      const { name, url, schema, apolloKey, variant } = graph;
       if (!apolloKey) {
         throw new Error(`Apollo api key was not provided for '${name}' graph`);
       }
@@ -58,7 +59,7 @@ class ServerlessPlugin {
       // defining it to already have a matching schema published before any of their checks can
       // pass, so when none of them have published yet, nobody can get past this gate first.
       // Skipping the check lets one subgraph publish to seed the registry and break the deadlock.
-      if (skipCheck) {
+      if (skipCheckByDefault) {
         this.logMessage(`Skipping composition check for '${name}@${variant}', publishing directly`);
       } else {
         this.logMessage(`Validating '${name}' federated graphql schema...`);
