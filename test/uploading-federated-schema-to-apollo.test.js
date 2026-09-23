@@ -190,35 +190,6 @@ describe('Uploading federated schema to Apollo', () => {
     });
   });
 
-  describe('when the APOLLO_SKIP_CHECK environment variable is set', () => {
-    beforeAll(async () => {
-      process.env.APOLLO_SKIP_CHECK = 'true';
-      const sls = given_an_sls_instance();
-      const slsPlugin = new plugin(sls, null);
-      await slsPlugin.uploadFederatedSchema();
-    });
-
-    afterAll(() => {
-      delete process.env.APOLLO_SKIP_CHECK;
-      jest.resetAllMocks();
-    });
-
-    test('does not call the apollo cli to validate the schema', () => {
-      expect(exec.execSync)
-        .not
-        .toHaveBeenCalledWith(
-          'npx --yes rover subgraph check myGraph@myStage --schema ./schema.gql --name my-implementing-service',
-          { stdio: 'inherit' });
-    });
-
-    test('still calls the apollo cli to publish the schema', () => {
-      expect(exec.execSync)
-        .toHaveBeenCalledWith(
-          'npx --yes rover subgraph publish myGraph@myStage --schema ./schema.gql --name my-implementing-service --routing-url https://my-implementing-service.com/graphql',
-          { stdio: 'inherit' });
-    });
-  });
-
   const given_an_sls_instance = ({
     withApolloKey,
     withRegion,

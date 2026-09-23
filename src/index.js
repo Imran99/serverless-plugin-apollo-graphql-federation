@@ -59,7 +59,7 @@ class ServerlessPlugin {
       // defining it to already have a matching schema published before any of their checks can
       // pass, so when none of them have published yet, nobody can get past this gate first.
       // Skipping the check lets one subgraph publish to seed the registry and break the deadlock.
-      if (skipCheck || process.env.APOLLO_SKIP_CHECK === 'true') {
+      if (skipCheck) {
         this.logMessage(`Skipping composition check for '${name}@${variant}', publishing directly`);
       } else {
         this.logMessage(`Validating '${name}' federated graphql schema...`);
